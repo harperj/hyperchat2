@@ -1,21 +1,31 @@
 # empty-webapp
 novice developer builds stack
 
-make sure you have `node`, `npm` and `grunt`
+## setup 
 
-then just
-```npm install```
+make sure you have `node` and `npm` 
+
+if you don't have gulp, `npm install --global gulp`
+
+then just `npm install` and `coffee server.coffee`!
 
 ## directory structure
 
+here are the directories you'll deal with:
+
 ```
-app/ <- this is the webapp 
-    styles/ <-- sass files here
-    assets/ <-- everything 
-	lib/ <- these are your common js-style coffeescript files
-	index.html <- the main html template
-	main.coffee <- entry point for the webapp  - start reading here
+server.coffee
+logs/
+dist/
+app/ 
+    assets/ 
+    lib/ 
+    index.html
+    entry.coffee
 ```
 
-`grunt` compiles `app/` to a neat bundle in `built-app/` coffeeify (browserify for coffeescript)
+`server.coffee` is the webserver
 
+`app/` contains all the webapp files - `entry.coffee` is the entrypoint into the app. all other coffee files go in `app/lib/`.
+
+`app/assets/` contains everything the app might need - css, images, etc
