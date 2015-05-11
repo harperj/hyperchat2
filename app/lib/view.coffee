@@ -10,6 +10,6 @@ exports.setup = () ->
 	# post some nonsense to the server
 	myRequest = postJson($, '/json', {hi:'hey'})
 	myRequest.done(
-		(data, ...) -> console.log 'server says:', JSON.parse(data))
+		(data, ...) -> console.log 'server says:', data)
 	myRequest.fail(
 		(jqXHR, textStatus, err) -> console.log 'post req failed!', jqXHR, textStatus, err)

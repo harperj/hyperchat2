@@ -4,21 +4,25 @@ app = express()
 server = require('http').Server(app);
 bodyParser = require 'body-parser'
 logger = require 'express-logger'
+fs = require 'fs'
+
+#
 # express config
+#
+port = 3000
 publicDir = "#{__dirname}/dist"
 app.use(express.static(publicDir))
 app.use(bodyParser.json())
 # debug logger
 app.use(logger({path: './logs/logfile.txt'}))
-# config
-port = 3000
+
+read = (file) ->
+    fs.createReadStream(path.join(publicDir, file))
 
 #
 # HTTP routes
 #
-app.get('/', (req, res) ->
-	res.sendFile(
-		path.join(publicDir, 'index.html')))
+app.get('/', (req, res) -> read('index.html').pipe(res))
 
 app.post('/json', (req, res) ->
 	console.log 'json!!', req.body

@@ -9,12 +9,14 @@ var buffer = require('vinyl-buffer');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
+var nodemon = require('gulp-nodemon')
 
 //
 // config
 var APP_HTML = ['./app/index.html']
 var APP_ASSETS = ['./app/assets/**']
 var APP_COFFEE = ['./app/**.coffee', './app/**/**.coffee']
+var APP_SERVER = 'server.coffee'
 
 // add custom browserify options here
 var browserifyOpts = {
@@ -28,21 +30,21 @@ var b = watchify(browserify(opts));
 b.transform(coffeeify);
 
 
-//
-// tasks
-//
 // register tasks
 gulp.task('js', bundle); // so you can run `gulp js` to build the file
 b.on('update', bundle); // on any dep update, runs the bundler
 b.on('log', gutil.log); // output build logs to terminal
 gulp.task('copy-assets', copyAssets);
 gulp.task('copy-html', copyHTML); 
+gulp.task('develop', develop);
+
 
 // watch for changes 
 gulp.task('watch', function() {
   gulp.watch(APP_COFFEE, ['js'])
   gulp.watch(APP_HTML, ['copy-html'])
   gulp.watch(APP_ASSETS, ['copy-assets'])
+  gulp.watch(APP_SERVER, ['develop'])
 })
 
 gulp.task('default', function() {
@@ -83,4 +85,21 @@ function copyHTML() {
 function copyAssets() {
   gulp.src(APP_ASSETS)
    .pipe(gulp.dest('./dist/assets'));
+}
+
+//
+// restart server with nodemon
+//
+function develop () {
+  nodemon({ script: APP_SERVER
+          , ext: 'coffee'
+<<<<<<< HEAD
+          , ignore: ['app/**.coffee'] })
+=======
+          , ignore: ['app/**.coffee']
+          , tasks: [] })
+>>>>>>> 2c7756e... added nodemon to gulpfile
+    .on('restart', function () {
+      console.log('restarted server!')
+    })
 }
