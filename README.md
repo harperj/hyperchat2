@@ -1,31 +1,24 @@
-# empty-webapp
-novice developer builds stack
+# empty webapp
 
-## setup 
+an empty webapp
 
-make sure you have `node` and `npm` 
+## setup
 
-if you don't have gulp, `npm install --global gulp`
+    npm install
 
-then just `npm install` and `coffee server.coffee`!
+## usage
 
-## directory structure
+to watch index.js, 
 
-here are the directories you'll deal with:
+    npm run watch
 
-```
-server.coffee
-logs/
-dist/
-app/ 
-    assets/ 
-    lib/ 
-    index.html
-    entry.coffee
-```
+to serve the static assets, open another terminal,
 
-`server.coffee` is the webserver
+    npm run serve
 
-`app/` contains all the webapp files - `entry.coffee` is the entrypoint into the app. all other coffee files go in `app/lib/`.
+and open localhost:8000 in your browser
 
-`app/assets/` contains everything the app might need - css, images, etc
+
+## license
+
+BSD
