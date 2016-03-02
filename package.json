@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -t hyperxify index.js -o bundle.js",
+    "watch": "watchify index.js -o bundle.js",
     "start": "ecstatic --port 9999",
     "dev": "npm run watch & npm start",
     "build": "browserify index.js | java -jar compiler.jar --language_out=ES5 > bundle.js; html-inline -i index.html -o dist/index.html"
