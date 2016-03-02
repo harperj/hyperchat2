@@ -2,17 +2,16 @@
   "main": "index.js",
   "scripts": {
     "watch": "watchify -t hyperxify index.js -o bundle.js",
-    "serve": "ecstatic"
+    "start": "ecstatic --port 9999",
+    "dev": "npm run watch & npm start"
   },
   "author": "elsehow",
   "license": "BSD-2-Clause",
   "devDependencies": {
     "ecstatic": "^1.4.0",
-    "hyperxify": "^1.2.1",
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "hyperx": "^1.3.1",
     "main-loop": "^3.2.0",
     "virtual-dom": "^2.1.1"
   }

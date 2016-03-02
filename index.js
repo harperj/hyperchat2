@@ -1,20 +1,15 @@
-// set up dom stuff
-var vdom   = require('virtual-dom')
-, hyperx   = require('hyperx')
-, hx       = hyperx(vdom.h)
-, main     = require('main-loop')
-, loop     = main({ times: 0 }, render, vdom)
+var h = require('virtual-dom/h')
+var main = require('main-loop')
+var loop = main({ n: 0 }, render, require('virtual-dom'))
 document.querySelector('#app').appendChild(loop.target)
 
 function render (state) {
-    return hx`<div>
-        <h1>clicked ${state.times} times</h1>
-        <button onclick=${onclick}>click me!</button>
-        </div>`
-
+    return h('div', [
+        h('h1', 'clicked ' + state.n + ' times'),
+        h('button', { onclick: onclick }, 'click me!')
+    ])
     function onclick () {
-        loop.update({ times: state.times + 1 })
+        loop.update({ n: state.n + 1 })
     }
 }
-
-console.log('run')
+console.log('running')
