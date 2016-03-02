@@ -4,7 +4,7 @@
     "watch": "watchify -t hyperxify index.js -o bundle.js",
     "start": "ecstatic --port 9999",
     "dev": "npm run watch & npm start",
-    "build": "browserify index.js | babel > bundle.js; html-inline -i index.html -o dist/index.html"
+    "build": "browserify index.js | babel | java -jar compiler.jar > bundle.js; html-inline -i index.html -o dist/index.html"
   },
   "author": "elsehow",
   "license": "BSD-2-Clause",

@@ -1,15 +1,16 @@
 var h = require('virtual-dom/h')
 var main = require('main-loop')
-var loop = main({ n: 0 }, render, require('virtual-dom'))
+var EE = require('events').EventEmitter
+var dispatcher = new EE()
+var loop = main({n:0}, render, require('virtual-dom'))
 document.querySelector('#app').appendChild(loop.target)
 
 function render (state) {
     return h('div', [
         h('h1', 'clicked ' + state.n + ' times'),
-        h('button', { onclick: onclick }, 'click me!')
+        h('button', { onclick: () => dispatcher.emit('inc', state.n) }, 'click me!')
     ])
-    function onclick () {
-        loop.update({ n: state.n + 1 })
-    }
 }
-console.log('running')
+
+dispatcher.on('inc', (n) => loop.update({n : n+1}))
+
