@@ -7,7 +7,7 @@ document.querySelector('#app').appendChild(loop.target)
 
 function render (state) {
     return h('div', [
-        h('h1', 'clicked ' + state.n + ' times'),
+        h('h1', `clicked ${state.n} times`),
         h('button', { onclick: () => dispatcher.emit('inc', state.n) }, 'click me!')
     ])
 }
