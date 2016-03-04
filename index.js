@@ -1,16 +1,41 @@
 var h = require('virtual-dom/h')
-var main = require('main-loop')
 var EE = require('events').EventEmitter
 var dispatcher = new EE()
-var loop = main({n:0}, render, require('virtual-dom'))
-document.querySelector('#app').appendChild(loop.target)
-
-function render (state) {
-    return h('div', [
-        h('h1', `clicked ${state.n} times`),
-        h('button', { onclick: () => dispatcher.emit('inc', state.n) }, 'click me!')
-    ])
+function declare (fn, store) {
+  var ml = require('main-loop')
+  var l = ml(store, fn, require('virtual-dom'))
+  document.querySelector('#app').appendChild(l.target)
+  return l
 }
 
-dispatcher.on('inc', (n) => loop.update({n : n+1}))
 
+// data structures
+
+var store = {
+  n: 0
+}
+
+
+// view logic
+
+function render (state) {
+
+  return h('div', [
+    h('h1', `clicked ${state.n} times`),
+    h('button', { onclick: handleClick }, 'click me!')
+  ])
+
+  function handleClick (ev) {
+    dispatcher.emit('button-click', ev)
+  }
+}
+
+
+// actions
+
+var loop = declare(render, store)
+
+dispatcher.on('button-click', (ev) => {
+  store.n = store.n+1 
+  loop.update(store)
+})
