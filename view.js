@@ -6,7 +6,7 @@ module.exports = (dispatcher) => {
 	function render (state) {
 	  return h('div', [
 	    h('h1', `clicked ${state.n} times`),
-	    h('button', { onclick: handleClick }, 'click m')
+	    h('button', { onclick: handleClick }, 'click')
 	  ])
 	
 	  function handleClick (ev) {

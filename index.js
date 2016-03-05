@@ -1,3 +1,6 @@
+// support live reloading ?
+var dev = true;
+// setup dom rendering
 var el = document.querySelector('#app')
 function declare (fn, store) {
   var ml = require('main-loop')
@@ -5,42 +8,45 @@ function declare (fn, store) {
   el.appendChild(l.target)
   return l
 }
+// for defoncing state
 var ud = require('ud')
-var udK = require('ud-kefir')
-
+// `dispatcher` is an app-wide event emitter 
+// it is "defonce"d, meaning it persists over reloads
 var EE = require('events').EventEmitter
 var dispatcher = ud.defonce(module, () => new EE(), 'dispatcher')
 
-// data structures
 
+
+// data structures
+// global app state is also defonced
 var store = ud.defonce(module, function () { 
 	return {
 		n: 0 
 	}
 }, 'store')
 
-// view logic
+// view fn - emits dispatcher events
 var render = require('./view.js')
-var renderS = udK(module, render, 'render fns')
-
+// actions - consume dispatcher events
 var actions = require('./actions.js')
-var actionS = udK(module, actions, 'actions fns')
 
-// make the loop, for the first time
-var loop = declare(render(dispatcher), store)
-
-// whenever there's a new render fn
-renderS.onValue(r => {
+// we run this on code reload
+function reload () {
 	// delete old view
 	el.innerHTML = ''
-  // make a new loop
-	loop = declare(r(dispatcher), store)
-})
-
-actionS.onValue(a => {
+	// remove all old listeners on the dispatcher
 	dispatcher.removeAllListeners()
-	a(dispatcher, store, loop) 
-})
+}
 
+// we run this on start
+function setup () {
+	if (dev)
+		reload()
+	// make a new loop
+	var loop = declare(render(dispatcher), store)
+	// set up all our new listeners
+	actions(dispatcher, store, loop) 
+}
 
-// TODO slightly clearer taredown() and setup() syntax
+// TODO onready
+setup()

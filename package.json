@@ -17,7 +17,6 @@
   "dependencies": {
     "main-loop": "^3.2.0",
     "ud": "^3.0.1",
-    "ud-kefir": "^2.0.2",
     "virtual-dom": "^2.1.1"
   }
 }

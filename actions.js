@@ -1,8 +1,8 @@
 function setup (dispatcher, store, loop) {
 	dispatcher.on('button-click', (ev) => {
-	  store.n = store.n+1000
-	  loop.update(store)
-	})
+		store.n = store.n-1
+		loop.update(store)
+	}	)
 	return
 }
 
