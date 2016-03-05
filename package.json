@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -vd -p browserify-hmr index.js -o bundle.js",
+    "watch": "watchify -vd -p [ browserify-hmr -u http://`ipconfig getifaddr en0`8888 -p 8888 ] index.js -o bundle.js",
     "start": "ecstatic --cache 1 --port 9999",
     "dev": "npm run watch & npm start",
     "build": "browserify index.js | java -jar compiler.jar --language_out=ES5 > bundle.js; html-inline -i index.html -o dist/index.html"
@@ -15,7 +15,12 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "chloride": "^2.0.1",
+    "lodash": "^4.6.1",
     "main-loop": "^3.2.0",
+    "md5": "^2.0.0",
+    "memdb": "^1.3.1",
+    "swarmlog": "^1.4.0",
     "ud": "^3.0.1",
     "virtual-dom": "^2.1.1"
   }
