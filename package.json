@@ -1,20 +1,23 @@
 {
   "main": "index.js",
   "scripts": {
-    "watch": "watchify index.js -o bundle.js",
-    "start": "ecstatic --port 9999",
+    "watch": "watchify -vd -p browserify-hmr index.js -o bundle.js",
+    "start": "ecstatic --cache 1 --port 9999",
     "dev": "npm run watch & npm start",
     "build": "browserify index.js | java -jar compiler.jar --language_out=ES5 > bundle.js; html-inline -i index.html -o dist/index.html"
   },
   "author": "elsehow",
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "browserify-hmr": "^0.3.1",
     "ecstatic": "^1.4.0",
     "html-inline": "^1.2.0",
     "watchify": "^3.7.0"
   },
   "dependencies": {
     "main-loop": "^3.2.0",
+    "ud": "^3.0.1",
+    "ud-kefir": "^2.0.2",
     "virtual-dom": "^2.1.1"
   }
 }

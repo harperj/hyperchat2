@@ -1,6 +1,10 @@
-# empty webapp
+# jigwheel
 
-an empty webapp
+bhauman's [figwheel](https://github.com/bhauman/lein-figwheel) is AMAZING! but, clojurescript does not interop super well with npm. (CLJSJS is great, but still not  as easy as `npm install`)
+
+until clojurescript works perfectly with npm, this hacky version will do
+
+**WARNING**: this is under active development. use at your own risk!
 
 ## setup
 
