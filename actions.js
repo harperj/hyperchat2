@@ -1,7 +1,7 @@
-function setup (dispatcher, store, loop) {
+function setup (dispatcher, store) {
 	dispatcher.on('button-click', (ev) => {
-		store.n = store.n-1
-		loop.update(store)
+		store.n = store.n+1
+    dispatcher.emit('update', store)
 	}	)
 	return
 }
