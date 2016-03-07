@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "scripts": {
-    "watch": "watchify -vd -p [ browserify-hmr -u http://`ipconfig getifaddr en0`8888 -p 8888 ] index.js -o bundle.js",
+    "watch": "watchify -vd -t babelify -p [ browserify-hmr -u http://`ipconfig getifaddr en0`:8888 -h `ipconfig getifaddr en0` -p 8888 ] index.js -o bundle.js",
     "start": "ecstatic --cache 1 --port 9999",
     "dev": "npm run watch & npm start",
     "build": "browserify index.js | java -jar compiler.jar --language_out=ES5 > bundle.js; html-inline -i index.html -o dist/index.html"
@@ -9,6 +9,7 @@
   "author": "elsehow",
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "babelify": "^7.2.0",
     "browserify-hmr": "^0.3.1",
     "ecstatic": "^1.4.0",
     "html-inline": "^1.2.0",
