@@ -43,7 +43,7 @@ function initialState () {
     },
     hyperlog: log,
     keys: keys,
-    boardName: 'hyperchat2 devs board',
+    boardName: require('./name.json').boardName,
     pseudonym: null, 
   }
 }
