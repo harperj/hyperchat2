@@ -1,0 +1,35 @@
+body {
+  background-color: rgb(17,12,15);
+  color: rgb(242,215,123);
+  padding: 5% 10%;
+  font-smoothing:subpixel-antialiased;
+
+
+}
+
+.senderID {
+  color: rgb(152, 203, 148);
+}
+
+textarea {
+  width:100%;
+  background-color: rgb(34,34,28);
+  border:none;
+  color: rgb(242,215,123);
+  display:block;
+  max-width:100%;
+  line-height:1.5;
+}
+
+.top-matter, .global-input {
+  padding-bottom:20px;
+}
+
+.post {
+  margin-bottom: 20px;
+}
+
+.thread {
+  margin-bottom:20px;
+  margin-top: 20px;
+}

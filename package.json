@@ -2,11 +2,11 @@
   "main": "index.js",
   "scripts": {
     "generate-keys": "node -pe \"JSON.stringify(require('ssb-keys').generate())\" > keys.json",
-    "watch": "watchify -vd -t babelify -p [ browserify-hmr -u http://`ipconfig getifaddr en0`:8888 -h `ipconfig getifaddr en0` -p 8888 ] index.js -o bundle.js",
-    "start": "ecstatic --cache 1 --port 9999",
+    "watch": "watchify -vd -t babelify -p [ browserify-hmr -u http://`ipconfig getifaddr en0`:8888 -h `ipconfig getifaddr en0` -p 8888 ] src/index.js -o static/bundle.js",
+    "start": "ecstatic static --cache 1 --port 9999",
     "dev": "npm run watch & npm start",
-    "build-closure": "browserify index.js | java -jar compiler.jar --language_out=ES5 > bundle.js; html-inline -i index.html -o dist/index.html",
-    "build": "browserify -t babelify index.js > bundle.js; html-inline -i index.html -o dist/index.html"
+    "build": "browserify -vd -t babelify src/index.js > static/bundle.js",
+    "inline": "html-inline -i static/index.html -o dist/index.html"
   },
   "author": "elsehow",
   "license": "BSD-2-Clause",
@@ -23,7 +23,6 @@
     "level-browserify": "^1.1.0",
     "lodash": "^4.6.1",
     "main-loop": "^3.2.0",
-    "markdown": "^0.5.0",
     "remark": "^4.1.2",
     "remark-highlight.js": "^3.0.0",
     "remark-vdom": "^2.0.0",

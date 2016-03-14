@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# function concatenate_args
+# {
+#     string=""
+#     for a in "$@" # Loop over arguments
+#     do
+#         if [[ "${a:0:1}" != "-" ]] # Ignore flags (first character is -)
+#         then
+#             if [[ "$string" != "" ]]
+#             then
+#                 string+=" " # Delimeter
+#             fi
+#             string+="$a"
+#         fi
+#     done
+#     echo "$string"
+# }
+
+# # Usage:
+# args="$(concatenate_args "$@")"
+
+
+#if [ -z "$args" ]
+if [ -z "$1" ]
+then
+  echo "You need to pick a board name. e.g., ./build \"Cool JS Crew\""
+  exit 1
+fi
+
+node -pe "JSON.stringify({boardName: \"$1\"})" > name.json
+npm run generate-keys
+npm run build
+npm run inline
