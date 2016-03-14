@@ -14,6 +14,7 @@ you may also want to generate a [checksum](https://www.npmjs.com/package/checksu
 # developing
 
         npm install
+        ./build "Board name"
         npm run generate-keys
         npm run dev
 
