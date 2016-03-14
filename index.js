@@ -3,7 +3,6 @@ var dev = true;
 // deps
 var _ = require('lodash')
 var ud = require('ud')
-var makeLog = require('./makeLog')
 var el = document.querySelector('#app')
 function declare (fn, store) {
   var ml = require('main-loop')
@@ -14,6 +13,24 @@ function declare (fn, store) {
 }
 var dispatcher = require('./dispatcher.js')
 
+// hyperlog stuff
+var swarmlog = require('swarmlog')
+var level = require('level-browserify')
+var keys = require('./keys.json')
+
+var log = swarmlog({
+  keys: keys,
+  sodium: require('chloride/browser'),
+  db: level(`./${keys['id']}`),
+  valueEncoding: 'json',
+  hubs: [ 'https://signalhub.mafintosh.com' ]
+})
+
+// any new data from the hyperlog
+log.createReadStream({ live: true })
+   .on('data', data => 
+     // is dispatched as 'swarmlog-data'
+     dispatcher.emit('swarmlog-data', data))
 
 
 // data structures
@@ -21,14 +38,21 @@ var dispatcher = require('./dispatcher.js')
 function initialState () {
   return {
   	messages: [],
-    hyperlog: makeLog(dispatcher),
+    inputs: {
+      null: ''
+    },
+    hyperlog: log,
+    keys: keys,
+    boardName: 'hyperchat2 devs board',
+    pseudonym: null, 
   }
 }
 
-function message (to, msg) {
+function message (to, msg, from) {
 	return {
 		message: msg,
 		replyTo: to ? to : null,
+    pseudonym: from
 	}
 }
 
@@ -43,7 +67,6 @@ var store = ud.defonce(module, initialState, 'store')
 // actions
 function actions (store) {
   dispatcher.on('swarmlog-data', function (d) {
-    console.log('swarmlog-data', d)
   	// add received message to our webapp state
   	store.messages.push(d)
     dispatcher.emit('update', store)
@@ -58,9 +81,21 @@ function actions (store) {
   	// add message to the hyperlog
     var sm = message(replyTo, msg, store.pseudonym)
   	store.hyperlog.append(sm)
+    // empty the input box
+    dispatcher.emit('edit-input', replyTo, '')
     dispatcher.emit('update', store)
   })
-  
+
+  dispatcher.on('change-pseudonym', (p) => {
+    store.pseudonym = p
+    dispatcher.emit('update', store)
+  })
+
+  dispatcher.on('edit-input', (mKey, v) => {
+    store.inputs[mKey] = v
+    dispatcher.emit('update', store)
+  })
+
 }
 
 
@@ -72,6 +107,9 @@ function reload () {
   el.innerHTML = ''
   // remove all old listeners on the dispatcher
   dispatcher.removeAllListeners()
+  // delete all messages 
+  // TODO why is this needed, when it wasn't before?
+  store.messages = []
 }
 // a function to run on setup
 function setup () {

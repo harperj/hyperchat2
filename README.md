@@ -1,25 +1,30 @@
-# jigwheel
+# hyperchat2
 
-bhauman's [figwheel](https://github.com/bhauman/lein-figwheel) is AMAZING and visionary! however, clojurescript does not interop super well with npm. CLJSJS is great, but still not  as easy as `npm install`.
+# quick start
 
-so, until clojurescript works perfectly with npm, here is a hacky version of figwheel. what it loses in slickness, it makes up for in modularity.
+        npm install
+        npm run generate-keys
+        npm run dev
 
-**WARNING**: this is under active development. use at your own risk!
+go to localhost:9999/
 
-## quick start
+you can live code index.js + render.js
 
-    npm install
-    npm run dev
+## TODO
 
-## usage
-
-edit =view.js=. the view updates live! how does it work?
-
-the first trick is [browserify-hmr](https://www.npmjs.com/package/browserify-hmr). the second, more interesting trick is [virtual-dom](https://www.npmjs.com/package/virtual-dom) & [main-loop](https://www.npmjs.com/package/main-loop), which allow us to define our view as a pure function of our application state (c.f. react). 
-
-/a la/ figwheel, we `defonce` our application state, which allows it to persist as we edit and reload our view code. we also `defonce` a `dispatcher`, a global event emitter to which our whole application can listen and emit events.
-
-personally, i make sure views only listen to disptacher. actions mutate the defonced state. but, i am not a dogmatic type of person. do as you please, live code away --nick
+.. ..
+.
+..
+- styling
+    ..
+    - syntax highlighting
+    - sender / message format
+    - spacing between messages
+.
+- a "messageboard factory"
+    – script that takes a name
+    - generates keys
+    - bundles + inlines
 
 ## license
 
