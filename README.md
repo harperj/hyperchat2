@@ -15,7 +15,6 @@ you may also want to generate a [checksum](https://www.npmjs.com/package/checksu
 
         npm install
         ./build "Board name"
-        npm run generate-keys
         npm run dev
 
 go to localhost:9999/
