@@ -21,7 +21,7 @@ var keys = require('../keys.json')
 var log = swarmlog({
   keys: keys,
   sodium: require('chloride/browser'),
-  db: level(`./${keys['id']}`),
+  db: level(`./${keys['id']}-swarmlog`),
   valueEncoding: 'json',
   hubs: [ 'https://signalhub.mafintosh.com' ]
 })
@@ -34,6 +34,8 @@ log.createReadStream({ live: true })
 
 
 // data structures
+
+var db = level(`./${keys['id']}-appDB`)
 
 function initialState () {
   return {
@@ -88,6 +90,7 @@ function actions (store) {
 
   dispatcher.on('change-pseudonym', (p) => {
     store.pseudonym = p
+    db.put('pseudonym', p)
     dispatcher.emit('update', store)
   })
 
@@ -123,6 +126,10 @@ function setup () {
   // and mutate `store`, triggering `loop` to update
   actions(store) 
   dispatcher.on('update', loop.update)
+  db.get('pseudonym', (err, p) => {
+    if (p)
+      dispatcher.emit('change-pseudonym', p)
+  })
 }
 
 // TODO onready
