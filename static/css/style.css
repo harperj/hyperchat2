@@ -10,6 +10,7 @@ body {
 }
 
 textarea {
+    width:100%;
   background-color: rgb(34,34,28);
   border:none;
   color: rgb(242,215,123);
@@ -20,9 +21,6 @@ textarea {
 
 .global-input {
   width:100%;
-}
-.reply {
-    width:80%;
 }
 
 .top-matter, .global-input {

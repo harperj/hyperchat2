@@ -3,6 +3,14 @@ var dispatcher = require('./dispatcher.js')
 var remark = require('remark');
 var hljs = require('remark-highlight.js')
 var vdom = require('remark-vdom');
+var _ = require('lodash')
+
+function validate (str) {
+  return str &&
+    !_.every(str, c =>
+      c === ' ' || c === '\t' || c === '\n')
+}
+
 function vdomify (markdown) {
   return remark().use([hljs, vdom]).process(markdown)
 }
@@ -105,7 +113,9 @@ function render (state) {
       buttonText = `post (as ${shownName(state.pseudonym)})`
 
     function sendMyMessage  () {
-      dispatcher.emit('send-message', messageKey, state.inputs[messageKey])
+        var txt = state.inputs[messageKey]
+        if (validate(txt))
+            dispatcher.emit('send-message', messageKey, txt)
     }
 
     return h('div', [
@@ -118,7 +128,11 @@ function render (state) {
         },
     	}),
       h('button',  {
-        onclick: sendMyMessage
+          onclick: sendMyMessage,
+          disabled: !validate(state.inputs[messageKey]),
+          style: {
+              float: 'right',
+          }
       }, buttonText)
     ])
   }
