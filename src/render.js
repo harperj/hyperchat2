@@ -129,7 +129,7 @@ function render (state) {
     	}),
       h('button',  {
           onclick: sendMyMessage,
-          disabled: !validate(state.inputs[messageKey]),
+          //disabled: !validate(state.inputs[messageKey]),
           style: {
               float: 'right',
           }
