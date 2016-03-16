@@ -3,8 +3,6 @@ body {
   color: rgb(242,215,123);
   padding: 5% 10%;
   font-smoothing:subpixel-antialiased;
-
-
 }
 
 .senderID {
@@ -12,7 +10,6 @@ body {
 }
 
 textarea {
-  width:100%;
   background-color: rgb(34,34,28);
   border:none;
   color: rgb(242,215,123);
@@ -21,12 +18,15 @@ textarea {
   line-height:1.5;
 }
 
-.top-matter, .global-input {
-  padding-bottom:20px;
+.global-input {
+  width:100%;
+}
+.reply {
+    width:80%;
 }
 
-.post {
-  margin-bottom: 20px;
+.top-matter, .global-input {
+  padding-bottom:20px;
 }
 
 .thread {

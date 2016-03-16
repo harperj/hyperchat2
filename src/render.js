@@ -100,6 +100,7 @@ function render (state) {
   function postInput (messageKey, className) {
 
     var buttonText = 'reply'
+
     if (!messageKey)
       buttonText = `post (as ${shownName(state.pseudonym)})`
 
@@ -124,7 +125,6 @@ function render (state) {
 
 
   function messageV (indent, max, m) {
-
     // get list of messages that are a reply to this message
     var rs = repliesTo(m.key, state.messages)
     var childMessageV = _.partial(messageV, indent+1, max)
@@ -132,26 +132,26 @@ function render (state) {
     // if we're not yet at max
     // show replies, and an input box
     if (indent < max) {
-      var replies = h('div', rs.map(childMessageV))
-      var input = postInput(m.key)
+        var replies = h('div', rs.map(childMessageV))
+        var input = postInput(m.key, 'reply')
     }
 
-		return h('div.post', {
-        style: {
-          'margin-left': 20*indent + 'px',
-        },
-      },
-      [
+		  return h('div', [
         // message pseudonym
         h('small', shownName(m.value.pseudonym)),
         // message markdown => hyperscript
         vdomify(m.value.message),
+        h('div.replies', {
+            style: {
+                'margin-left': 20*(indent+1) + 'px',
+            },
+        }, [
         // list of replies to message
         replies,
         // input to reply to comment
         input,
-      ]
-    )
+        ])
+    ])
   }
 }
 
