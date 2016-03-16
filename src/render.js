@@ -113,7 +113,7 @@ function render (state) {
         className: className,
         value: state.inputs[messageKey],
         // update input value on keyup
-        onkeyup: (ev) => {
+        onchange: (ev) => {
           dispatcher.emit('edit-input', messageKey, ev.target.value)
         },
     	}),
