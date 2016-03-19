@@ -1,15 +1,11 @@
 var h = require('virtual-dom/h')
-var dispatcher = require('./dispatcher.js')
 var remark = require('remark');
 var hljs = require('remark-highlight.js')
 var vdom = require('remark-vdom');
 var _ = require('lodash')
 
-function validate (str) {
-  return str &&
-    !_.every(str, c =>
-      c === ' ' || c === '\t' || c === '\n')
-}
+var dispatcher = require('./dispatcher.js')
+var validate = require('./validate.js')
 
 function vdomify (markdown) {
   return remark().use([hljs, vdom]).process(markdown)
@@ -114,8 +110,13 @@ function render (state) {
 
     function sendMyMessage  () {
         var txt = state.inputs[messageKey]
-        if (validate(txt))
+        if (validate(txt)) {
             dispatcher.emit('send-message', messageKey, txt)
+        }
+        else {
+
+        }
+
     }
 
     return h('div', [
