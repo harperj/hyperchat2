@@ -1,21 +1,17 @@
-var h = require('virtual-dom/h')
-var dispatcher = require('./dispatcher.js')
-var remark = require('remark');
-var hljs = require('remark-highlight.js')
-var vdom = require('remark-vdom');
-var _ = require('lodash')
+import h from 'virtual-dom/h';
+import remark from 'remark';
+import hljs from 'remark-highlight.js';
+import vdom from 'remark-vdom';
+import _ from 'lodash';
 
-function validate (str) {
-  return str &&
-    !_.every(str, c =>
-      c === ' ' || c === '\t' || c === '\n')
-}
+import dispatcher from './dispatcher.js';
+import validate from './validate.js';
 
 function vdomify (markdown) {
   return remark().use([hljs, vdom]).process(markdown)
 }
 
-var editingIdentity = false;
+let editingIdentity = false;
 
 function shownName (name) {
   return name ? name : 'Anonymous'
@@ -114,8 +110,13 @@ function render (state) {
 
     function sendMyMessage  () {
         var txt = state.inputs[messageKey]
-        if (validate(txt))
+        if (validate(txt)) {
             dispatcher.emit('send-message', messageKey, txt)
+        }
+        else {
+
+        }
+
     }
 
     return h('div', [
@@ -170,4 +171,4 @@ function render (state) {
 }
 
 
-module.exports = render
+export default render;
