@@ -6,7 +6,8 @@
     "start": "ecstatic static --cache 1 --port 9999",
     "dev": "npm run watch & npm start",
     "build": "browserify -vd src/index.js > static/bundle.js",
-    "inline": "html-inline -i static/index.html -o dist/index.html"
+    "inline": "html-inline -i static/index.html -o dist/index.html",
+    "dist": "npm run build && npm run inline"
   },
   "author": "elsehow",
   "license": "BSD-2-Clause",
