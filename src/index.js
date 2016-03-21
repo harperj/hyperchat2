@@ -1,27 +1,30 @@
+import _ from 'lodash';
+import { defonce } from 'ud';
+import mainLoop from 'main-loop';
+import virtualDom from 'virtual-dom';
+
+import dispatcher from './dispatcher.js';
+import render from './render.js';
+
 // support live reloading ?
-var dev = true;
-// deps
-var _ = require('lodash')
-var ud = require('ud')
-var el = document.querySelector('#app')
-function declare (fn, store) {
-  var ml = require('main-loop')
-  var vd = require('virtual-dom')
-  var l = ml(store, fn, vd)
-  el.appendChild(l.target)
-  return l
-}
-var dispatcher = require('./dispatcher.js')
+const DEVELOPMENT_MODE = true;
 
 // hyperlog stuff
-var swarmlog = require('swarmlog')
-var level = require('level-browserify')
-var keys = require('../keys.json')
+import swarmlog from 'swarmlog';
+import level from 'level-browserify';
+import chloride from 'chloride/browser';
 
-var log = swarmlog({
-  keys: keys,
-  sodium: require('chloride/browser'),
-  db: level(`./${keys['id']}-swarmlog`),
+import boardKeys from '../keys.json';
+import boardName from '../name.json'
+
+const appDB = level(`./${boardKeys.id}-appDB`);
+const BOARD_NAME = boardName.boardName;
+const swarmlogDB = level(`./${boardKeys.id}-swarmlog`);
+
+const log = swarmlog({
+  keys: boardKeys,
+  sodium: chloride,
+  db: swarmlogDB,
   valueEncoding: 'json',
   hubs: [ 'https://signalhub.mafintosh.com' ]
 })
@@ -33,10 +36,8 @@ log.createReadStream({ live: true })
      dispatcher.emit('swarmlog-data', data))
 
 
+
 // data structures
-
-var db = level(`./${keys['id']}-appDB`)
-
 function initialState () {
   return {
   	messages: [],
@@ -44,67 +45,64 @@ function initialState () {
       null: ''
     },
     hyperlog: log,
-    keys: keys,
-    boardName: require('../name.json').boardName,
+    keys: boardKeys,
+    boardName: BOARD_NAME,
     pseudonym: null, 
   }
 }
 
+// defonced global app state
+const appState = defonce(module, initialState, 'appState');
+
 function message (to, msg, from) {
-	return {
-		message: msg,
-		replyTo: to ? to : null,
+  return {
+    message: msg,
+    replyTo: to ? to : null,
     pseudonym: from
-	}
+  }
 }
 
-
-
-// defonced state
-// global app state is also defonced
-var store = ud.defonce(module, initialState, 'store')
-
-
-
-// actions
-function actions (store) {
+function setup_actions (appState) {
   dispatcher.on('swarmlog-data', function (d) {
-  	// add received message to our webapp state
-  	store.messages.push(d)
-    dispatcher.emit('update', store)
+    // add received message to our webapp state
+    appState.messages.push(d)
+    dispatcher.emit('update', appState)
   })
 
   dispatcher.on('textbox-value', function (messageID, msg) {
-    store.inputs[messageID] = msg
-    dispatcher.emit('update', store)
+    appState.inputs[messageID] = msg
+    dispatcher.emit('update', appState)
   })
   
   dispatcher.on('send-message', function (replyTo, msg) {
-  	// add message to the hyperlog
-    var sm = message(replyTo, msg, store.pseudonym)
-  	store.hyperlog.append(sm)
+    // add message to the hyperlog
+    const sm = message(replyTo, msg, appState.pseudonym)
+    appState.hyperlog.append(sm)
     // empty the input box
     dispatcher.emit('edit-input', replyTo, '')
-    dispatcher.emit('update', store)
+    dispatcher.emit('update', appState)
   })
 
   dispatcher.on('change-pseudonym', (p) => {
-    store.pseudonym = p
-    db.put('pseudonym', p)
-    dispatcher.emit('update', store)
+    appState.pseudonym = p
+    appDB.put('pseudonym', p)
+    dispatcher.emit('update', appState)
   })
 
   dispatcher.on('edit-input', (mKey, v) => {
-    store.inputs[mKey] = v
-    dispatcher.emit('update', store)
+    appState.inputs[mKey] = v
+    dispatcher.emit('update', appState)
   })
-
 }
 
+const el = document.querySelector('#app');
+function setupVirtualDOM(renderFn, appState) {
+  const loop = mainLoop(appState, renderFn, virtualDom);
+  el.appendChild(loop.target)
+  return loop
+}
 
-
-// setup
-// a function to run on reload
+// reset the app on reload
 function reload () {
   // delete old view
   el.innerHTML = ''
@@ -112,25 +110,27 @@ function reload () {
   dispatcher.removeAllListeners()
   // delete all messages 
   // TODO why is this needed, when it wasn't before?
-  store.messages = []
+  appState.messages = []
 }
-// a function to run on setup
+
 function setup () {
-  if (dev)     // if we're devloping
-    reload()   // reload
-  // make a `loop` with `render` fn 
-  // and `store` as initial state
+  if (DEVELOPMENT_MODE) reload() // if in development mode, reset the app
+
+  // make a `domUpdateLoop` and `appState` as initial state
   // view items will emit events over `dispatcher`
-  var loop = declare(require('./render.js'), store)
+  var domUpdateLoop = setupVirtualDOM(render, appState)
+
   // `actions` will react to events on `dispatcher`
-  // and mutate `store`, triggering `loop` to update
-  actions(store) 
-  dispatcher.on('update', loop.update)
-  db.get('pseudonym', (err, p) => {
-    if (p)
-      dispatcher.emit('change-pseudonym', p)
+  // and mutate `appState`, triggering `domUpdateLoop` to update
+  setup_actions(appState) 
+  dispatcher.on('update', domUpdateLoop.update) // 
+
+  appDB.get('pseudonym', (err, p) => {
+    if (p) dispatcher.emit('change-pseudonym', p)
   })
 }
 
 // TODO onready
 setup()
+
+export default render;

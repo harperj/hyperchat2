@@ -1,5 +1,7 @@
-var ud = require('ud')
-var EE = require('events').EventEmitter
-var dispatcher = ud.defonce(module, function () { return new EE()}, 'dispatcher')
+import { defonce } from 'ud';
+import events from 'events';
+let EE = events.EventEmitter
 
-module.exports = dispatcher
+const dispatcher = defonce(module, function () { return new EE()}, 'dispatcher')
+
+export default dispatcher;

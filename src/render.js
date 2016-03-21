@@ -1,29 +1,25 @@
-var h = require('virtual-dom/h')
-var dispatcher = require('./dispatcher.js')
-var remark = require('remark');
-var hljs = require('remark-highlight.js')
-var vdom = require('remark-vdom');
-var _ = require('lodash')
+import h from 'virtual-dom/h';
+import remark from 'remark';
+import hljs from 'remark-highlight.js';
+import vdom from 'remark-vdom';
+import _ from 'lodash';
 
-function validate (str) {
-  return str &&
-    !_.every(str, c =>
-      c === ' ' || c === '\t' || c === '\n')
-}
+import dispatcher from './dispatcher.js';
+import validate from './validate.js';
 
-function vdomify (markdown) {
+function vdomify(markdown) {
   return remark().use([hljs, vdom]).process(markdown)
 }
 
-var editingIdentity = false;
+let editingIdentity = false;
 
-function shownName (name) {
-  return name ? name : 'Anonymous'
+function shownName(name) {
+  return name ? name : 'Anonymous';
 }
 
 // messages that are not replies to anything
 // sorted newest first
-function topLevelFeed (messages) {
+function topLevelFeed(messages) {
   return _
     .chain(messages)
     .filter(d => !d.value.replyTo)
@@ -34,8 +30,8 @@ function topLevelFeed (messages) {
 
 // get replies to `messageID`
 // sorted newest last
-function repliesTo (messageID, messages) {
-  return  _
+function repliesTo(messageID, messages) {
+  return _
     .chain(messages)
     .filter(d => d.value.replyTo === messageID)
     .sortBy('change')
@@ -44,17 +40,18 @@ function repliesTo (messageID, messages) {
 
 
 
-function render (state) {
+function render(state) {
 
   // get top-level message feed
-  var ms = topLevelFeed(state.messages)
+  let ms = topLevelFeed(state.messages)
+  
   // header
   return h('div', [
     h('div.top-matter', [
       // board identitiy
       header(),
       // user identity
-      identity(), 
+      identity(),
     ]),
     // messageboard
     h('div.messageboard', [
@@ -67,15 +64,15 @@ function render (state) {
 
   // helper functions
   // board name
-  function header () {
+  function header() {
     return h('div.board-header', [
       h('h3', state.boardName),
       h('pre', state.keys.id),
     ])
   }
 
-  function identity () {
-    function toggleEditing (val) {
+  function identity() {
+    function toggleEditing(val) {
       if (val)
         editingIdentity = val
       else
@@ -105,17 +102,19 @@ function render (state) {
     ])
   }
 
-  function postInput (messageKey, className) {
+  function postInput(messageKey, className) {
 
-    var buttonText = 'reply'
+    let buttonText = 'reply'
 
     if (!messageKey)
       buttonText = `post (as ${shownName(state.pseudonym)})`
 
-    function sendMyMessage  () {
-        var txt = state.inputs[messageKey]
-        if (validate(txt))
-            dispatcher.emit('send-message', messageKey, txt)
+    function sendMyMessage() {
+      const txt = state.inputs[messageKey]
+      if (validate(txt)) {
+        dispatcher.emit('send-message', messageKey, txt)
+      } 
+      else { }
     }
 
     return h('div', [
@@ -126,48 +125,48 @@ function render (state) {
         onchange: (ev) => {
           dispatcher.emit('edit-input', messageKey, ev.target.value)
         },
-    	}),
-      h('button',  {
-          onclick: sendMyMessage,
-          //disabled: !validate(state.inputs[messageKey]),
-          style: {
-              float: 'right',
-          }
+      }),
+      h('button', {
+        onclick: sendMyMessage,
+        //disabled: !validate(state.inputs[messageKey]),
+        style: {
+          float: 'right',
+        }
       }, buttonText)
     ])
   }
 
 
-  function messageV (indent, max, m) {
+  function messageV(indent, max, m) {
     // get list of messages that are a reply to this message
-    var rs = repliesTo(m.key, state.messages)
-    var childMessageV = _.partial(messageV, indent+1, max)
+    let rs = repliesTo(m.key, state.messages)
+    let childMessageV = _.partial(messageV, indent + 1, max)
 
     // if we're not yet at max
     // show replies, and an input box
     if (indent < max) {
-        var replies = h('div', rs.map(childMessageV))
-        var input = postInput(m.key, 'reply')
+      let replies = h('div', rs.map(childMessageV))
+      let input = postInput(m.key, 'reply')
     }
 
-		  return h('div', [
-        // message pseudonym
-        h('small', shownName(m.value.pseudonym)),
-        // message markdown => hyperscript
-        vdomify(m.value.message),
-        h('div.replies', {
-            style: {
-                'margin-left': 20*(indent+1) + 'px',
-            },
+    return h('div', [
+      // message pseudonym
+      h('small', shownName(m.value.pseudonym)),
+      // message markdown => hyperscript
+      vdomify(m.value.message),
+      h('div.replies', {
+          style: {
+            'margin-left': 20 * (indent + 1) + 'px',
+          },
         }, [
-        // list of replies to message
-        replies,
-        // input to reply to comment
-        input,
-        ])
+          // list of replies to message
+          replies,
+          // input to reply to comment
+          input,
+      ])
     ])
   }
 }
 
 
-module.exports = render
+export default render;
