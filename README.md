@@ -1,5 +1,9 @@
 # hyperchat2
 
+a p2p messageboard around a distributed, append-only data store.
+
+see [swarmlog](https://github.com/substack/swarmlog)
+
 # building a board for your friends
 
         npm install
